@@ -44,7 +44,11 @@ export const RecapStep = ({
     pair: string;
     swap: string;
     token: string;
-  }>();
+  }>({
+    pair: "",
+    swap: "",
+    token: "0x04c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
+  });
 
   useEffect(() => {
     connect({modalMode: "neverAsk", chainId: "SN_MAINNET"}).then((sn) =>
@@ -119,6 +123,53 @@ export const RecapStep = ({
                 ETH
               </TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell>Liquidity</TableCell>
+              <TableCell>
+                {getValues("lockLiquidity") ? "locked" : "free"}
+              </TableCell>
+            </TableRow>
+            {launched && (
+              <>
+                <TableRow>
+                  <TableCell>Pair</TableCell>
+                  <TableCell>
+                    <Link
+                      href={launched.pair}
+                      className="text-primary underline"
+                      target="_blank"
+                    >
+                      sithswap.com
+                    </Link>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Swap</TableCell>
+                  <TableCell>
+                    <Link
+                      href={launched.swap}
+                      className="text-primary underline"
+                      target="_blank"
+                    >
+                      avnu.fi
+                    </Link>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Address</TableCell>
+                  <TableCell>
+                    <Link
+                      href={`https://starkscan.co/token/${launched.token}`}
+                      className="text-primary underline"
+                      target="_blank"
+                    >
+                      {launched.token.slice(0, 10)}...
+                      {launched.token.slice(-10)}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              </>
+            )}
           </TableBody>
         </Table>
       </div>
@@ -406,53 +457,21 @@ export const RecapStep = ({
           )}
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          <span>
-            Pair:{" "}
-            <Link
-              href={launched.pair}
-              className="text-primary underline"
-              target="_blank"
-            >
-              sithswap.com
-            </Link>
-          </span>
-          <span>
-            Swap:{" "}
-            <Link
-              href={launched.swap}
-              className="text-primary underline"
-              target="_blank"
-            >
-              avnu.fi
-            </Link>
-          </span>
-          <span>
-            Token:{" "}
-            <Link
-              href={`https://starkscan.co/token/${launched.token}`}
-              className="text-primary underline"
-              target="_blank"
-            >
-              {launched.token}
-            </Link>
-          </span>
-          <Link
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-              `I created $${getValues(
-                "ticker"
-              )} in seconds with zkmeme by @flydex0.\nContract address: ${
-                launched.token
-              }\n`
-            )}&url=${encodeURIComponent(`https://zkmeme.vercel.app`)}`}
-            target="_blank"
-          >
-            <Button>
-              <Twitter className="w-4 h-4 mr-2" />
-              Share on twitter
-            </Button>
-          </Link>
-        </div>
+        <Link
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            `I created $${getValues(
+              "ticker"
+            )} in seconds with zkmeme by @flydex0.\nContract address: ${
+              launched.token
+            }\n`
+          )}&url=${encodeURIComponent(`https://zkmeme.vercel.app`)}`}
+          target="_blank"
+        >
+          <Button>
+            <Twitter className="w-4 h-4 mr-2" />
+            Share on twitter
+          </Button>
+        </Link>
       )}
     </div>
   );
