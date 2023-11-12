@@ -46,7 +46,12 @@ export const viewport: Viewport = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head></head>
+      <head>
+        <meta
+          name="google-site-verification"
+          content="HCM_UD_LHMCyEDEDGI2qHSEtu64847pQ8Pb4m0Xm2ac"
+        />
+      </head>
       <body className={clsx(inter.className, "dark")}>
         {children}
         <Analytics />
