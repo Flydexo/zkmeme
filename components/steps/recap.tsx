@@ -6,7 +6,7 @@ import {z} from "zod";
 import {Pie} from "react-chartjs-2";
 import {Chart as ChartJS, ArcElement, Tooltip, Legend, Colors} from "chart.js";
 import {StarknetWindowObject, connect} from "@argent/get-starknet";
-import {Account, uint256} from "starknet";
+import {Account, Provider, uint256} from "starknet";
 import {useEffect, useState} from "react";
 import {parseEther} from "ethers";
 import {toast} from "../ui/use-toast";
@@ -215,17 +215,13 @@ export const RecapStep = ({
                   });
                   await new Promise((resolve) => {
                     const interval = setInterval(async () => {
-                      try {
-                        const receipt = await account.getTransactionReceipt(
-                          deployed.transaction_hash
-                        );
-                        if (
-                          (receipt as any).finality_status === "ACCEPTED_ON_L2"
-                        ) {
-                          clearInterval(interval);
-                          resolve(() => {});
-                        }
-                      } catch (e) {}
+                      const receipt = await account.getTransactionReceipt(
+                        deployed.transaction_hash
+                      );
+                      if (receipt.status === "ACCEPTED_ON_L2") {
+                        clearInterval(interval);
+                        resolve(() => {});
+                      }
                     }, 2000);
                   });
                   toast({
@@ -374,22 +370,24 @@ export const RecapStep = ({
                   ]);
                   await new Promise((resolve) => {
                     const interval = setInterval(async () => {
-                      try {
-                        const receipt = await account.getTransactionReceipt(
-                          tx.transaction_hash
-                        );
-                        if (
-                          (receipt as any).finality_status === "ACCEPTED_ON_L2"
-                        ) {
-                          clearInterval(interval);
-                          resolve(() => {});
-                        }
-                      } catch (e) {}
+                      const receipt = await account.getTransactionReceipt(
+                        tx.transaction_hash
+                      );
+                      if (receipt.status === "ACCEPTED_ON_L2") {
+                        clearInterval(interval);
+                        resolve(() => {});
+                      }
                     }, 2000);
+                  });
+                  const provider = new Provider({
+                    rpc: {
+                      nodeUrl:
+                        "https://g.w.lavanet.xyz:443/gateway/strk/rpc-http/f7ee0000000000000000000000000000",
+                    },
                   });
                   const {
                     result: [pair],
-                  } = await account.callContract({
+                  } = await provider.callContract({
                     entrypoint: "pairFor",
                     contractAddress: router,
                     calldata: [deployed.contract_address[0], ETH, 0],
