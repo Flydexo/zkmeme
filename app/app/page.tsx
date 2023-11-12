@@ -11,6 +11,7 @@ import {MarketStep} from "@/components/steps/market";
 import {DistributionStep} from "@/components/steps/distribution";
 import {RecapStep} from "@/components/steps/recap";
 import {schema} from "@/lib/config";
+import {Toaster} from "@/components/ui/toaster";
 
 export default function Trade() {
   const [step, setStep] = useState(0);
@@ -23,13 +24,15 @@ export default function Trade() {
       ticker: "TKN",
       initialSupply: 100,
       marketShare: 10,
-      marketNotional: 0,
+      marketNotional: 1,
       airdrops: [],
+      lockLiquidity: true,
     },
   });
 
   return (
     <div className="grid w-screen h-screen place-content-center dark">
+      <Toaster />
       {step === 0 ? (
         <NameStep input={register("name")} next={() => setStep(1)} />
       ) : step === 1 ? (

@@ -71,9 +71,9 @@ export const DistributionStep = ({
                     <Label htmlFor={`${i}.share`}>Share (%)</Label>
                     <NumberInput
                       value={value}
-                      onChange={(e) =>
-                        onChange({target: {value: parseInt(e.target.value)}})
-                      }
+                      onValueChange={(a) => {
+                        onChange({target: {value: a.floatValue}});
+                      }}
                       id={`${i}.share`}
                     />
                   </div>

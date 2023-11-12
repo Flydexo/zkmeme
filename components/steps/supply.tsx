@@ -33,19 +33,19 @@ export const SupplyStep = ({
           <div className="w-full flex justify-between">
             <Button
               variant={"secondary"}
-              onClick={() => onChange({target: {value: "21000000"}})}
+              onClick={() => onChange({target: {value: 21000000}})}
             >
               21 million
             </Button>
             <Button
               variant={"secondary"}
-              onClick={() => onChange({target: {value: "1000000000"}})}
+              onClick={() => onChange({target: {value: 1000000000}})}
             >
               1 Billion
             </Button>
             <Button
               variant={"secondary"}
-              onClick={() => onChange({target: {value: "1000000000000"}})}
+              onClick={() => onChange({target: {value: 1000000000000}})}
             >
               1 Trillion
             </Button>
@@ -60,9 +60,11 @@ export const SupplyStep = ({
           render={({field: {onChange}}) => {
             return (
               <NumberInput
+                onValueChange={(a) => {
+                  onChange({target: {value: a.floatValue}});
+                }}
                 thousandSeparator=","
                 allowLeadingZeros={false}
-                onChange={onChange}
                 value={watch("initialSupply")}
                 id="supply"
               />
