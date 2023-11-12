@@ -31,7 +31,7 @@ export default function Trade() {
   });
 
   return (
-    <div className="grid w-screen h-screen place-content-center dark">
+    <>
       <Toaster />
       {step === 0 ? (
         <NameStep input={register("name")} next={() => setStep(1)} />
@@ -67,6 +67,6 @@ export default function Trade() {
       ) : step === 5 ? (
         <RecapStep back={() => setStep(4)} getValues={getValues} />
       ) : null}
-    </div>
+    </>
   );
 }
