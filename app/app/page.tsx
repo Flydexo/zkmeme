@@ -12,6 +12,7 @@ import {DistributionStep} from "@/components/steps/distribution";
 import {RecapStep} from "@/components/steps/recap";
 import {schema} from "@/lib/config";
 import {Toaster} from "@/components/ui/toaster";
+import {Progress} from "@/components/ui/progress";
 
 export default function Trade() {
   const [step, setStep] = useState(0);
@@ -31,7 +32,7 @@ export default function Trade() {
   });
 
   return (
-    <>
+    <div className="w-1/2">
       <Toaster />
       {step === 0 ? (
         <NameStep input={register("name")} next={() => setStep(1)} />
@@ -67,6 +68,7 @@ export default function Trade() {
       ) : step === 5 ? (
         <RecapStep back={() => setStep(4)} getValues={getValues} />
       ) : null}
-    </>
+      <Progress value={(step / 5) * 100} className="mt-10" />
+    </div>
   );
 }
