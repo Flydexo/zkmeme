@@ -19,7 +19,7 @@ export const metadata: Metadata = {
         width: 800,
         height: 600,
         alt: "ZKMeme logo",
-        type: "summary_large_image",
+        type: "summary",
       },
     ],
     title: "A meme is a thousand images, a ZKMeme is 2**251+17*2192+1 memes",
