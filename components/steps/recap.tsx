@@ -29,7 +29,7 @@ const ETH =
 const zkMeme =
   "0x00511C44Ac32BE44d25a2b5C62ea815F1D8d741DEA639507076BdEc9B7b89Aa9";
 const classHash =
-  "0x21293e71e7efff54ea1efe62a3cec51eaeb94ea4769339c4d5d9e8cde29a080";
+  "0x021293e71e7efff54ea1efe62a3cec51eaeb94ea4769339c4d5d9e8cde29a080";
 
 export const RecapStep = ({
   back,
@@ -197,7 +197,7 @@ export const RecapStep = ({
                     title: "Deploying token",
                   });
                   const deployed = await account.deploy({
-                    classHash: "",
+                    classHash,
                     constructorCalldata: [
                       Buffer.from(getValues("name"), "ascii"),
                       Buffer.from(getValues("ticker"), "ascii"),
