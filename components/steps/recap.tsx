@@ -92,7 +92,12 @@ export const RecapStep = ({
             </Button>
           )}
           {!starknet ? (
-            <Button onClick={() => connect({chainId: "SN_GOERLI"})}>
+            <Button
+              onClick={async () => {
+                const account = await connect({chainId: "SN_GOERLI"});
+                if (account) setStarknet(account);
+              }}
+            >
               Connect Wallet
             </Button>
           ) : (
