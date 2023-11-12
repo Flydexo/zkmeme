@@ -44,11 +44,7 @@ export const RecapStep = ({
     pair: string;
     swap: string;
     token: string;
-  }>({
-    pair: "",
-    swap: "",
-    token: "0x04c0a5193d58f74fbace4b74dcf65481e734ed1714121bdc571da345540efa05",
-  });
+  }>();
 
   useEffect(() => {
     connect({modalMode: "neverAsk", chainId: "SN_MAINNET"}).then((sn) =>
