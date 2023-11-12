@@ -2,6 +2,7 @@ import type {Metadata, Viewport} from "next";
 import {Inter} from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
+import {Analytics} from "@vercel/analytics/react";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -46,7 +47,10 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head></head>
-      <body className={clsx(inter.className, "dark")}>{children}</body>
+      <body className={clsx(inter.className, "dark")}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
