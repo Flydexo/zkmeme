@@ -104,8 +104,9 @@ export const DistributionStep = ({
           <Plus className="h-4 w-4" />
         </Button>
       </div>
-      <div>
+      <div className="w-[500px]">
         <Pie
+          redraw={true}
           data={{
             labels: [
               "Liquidity Pool",

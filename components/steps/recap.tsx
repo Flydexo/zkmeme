@@ -6,19 +6,30 @@ import {z} from "zod";
 import {Pie} from "react-chartjs-2";
 import {Chart as ChartJS, ArcElement, Tooltip, Legend, Colors} from "chart.js";
 import {StarknetWindowObject, connect} from "@argent/get-starknet";
-import {Account, uint256} from "starknet";
+import {Account, Provider, uint256} from "starknet";
 import {useEffect, useState} from "react";
 import {parseEther} from "ethers";
 import {toast} from "../ui/use-toast";
 import Link from "next/link";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors);
 const router =
-  "0x3b0310fe3e35fef5e8a0150607ea77dc6541a2d39498072b809f511a1364dae";
+  "0x028c858a586fa12123a1ccb337a0a3b369281f91ea00544d0c086524b759f627";
 const ETH =
   "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 const zkMeme =
-  "0x048BF0A2F6170BB162A3D8A821E54dC0dB313F5aef5c8Dc3068237D230d1f94a";
+  "0x00511C44Ac32BE44d25a2b5C62ea815F1D8d741DEA639507076BdEc9B7b89Aa9";
+const classHash =
+  "0x021293e71e7efff54ea1efe62a3cec51eaeb94ea4769339c4d5d9e8cde29a080";
 
 export const RecapStep = ({
   back,
@@ -36,7 +47,7 @@ export const RecapStep = ({
   }>();
 
   useEffect(() => {
-    connect({modalMode: "neverAsk", chainId: "SN_GOERLI"}).then((sn) =>
+    connect({modalMode: "neverAsk", chainId: "SN_MAINNET"}).then((sn) =>
       setStarknet(sn)
     );
   }, []);
@@ -45,43 +56,118 @@ export const RecapStep = ({
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-bold">Recap</h1>
       <p className="text-sm">You token is ready to launch! 🚀</p>
-      <h2>Name: {getValues("name")}</h2>
-      <h2>Ticker: ${getValues("ticker")}</h2>
-      <h2>Supply: {getValues("initialSupply")}</h2>
-      <h2>Initial Liquidity: {getValues("marketNotional")} ETH</h2>
-      <div className="h-[400px]">
-        <Pie
-          options={{
-            plugins: {
-              legend: {display: false},
-            },
-          }}
-          data={{
-            labels: [
-              "Liquidity Pool",
-              "ZkMeme",
-              ...getValues("airdrops").map((a) => a.address),
-              "you",
-            ],
-            datasets: [
-              {
-                label: "Token distribution",
-                data: [
-                  getValues("marketShare"),
-                  5,
-                  ...getValues("airdrops").map((a) => a.share),
-                  100 -
-                    [
-                      getValues("marketShare"),
-                      5,
-                      ...getValues("airdrops").map((a) => a.share),
-                    ].reduce((a, b) => a + b),
-                ],
-                hoverOffset: 4,
+      <div className="w-full flex gap-10">
+        <div className="w-[300px]">
+          <Pie
+            options={{
+              plugins: {
+                legend: {display: false},
               },
-            ],
-          }}
-        />
+            }}
+            data={{
+              labels: [
+                "Liquidity Pool",
+                "ZkMeme",
+                ...getValues("airdrops").map((a) => a.address),
+                "you",
+              ],
+              datasets: [
+                {
+                  label: "Token distribution",
+                  data: [
+                    getValues("marketShare"),
+                    5,
+                    ...getValues("airdrops").map((a) => a.share),
+                    100 -
+                      [
+                        getValues("marketShare"),
+                        5,
+                        ...getValues("airdrops").map((a) => a.share),
+                      ].reduce((a, b) => a + b),
+                  ],
+                  hoverOffset: 4,
+                },
+              ],
+            }}
+          />
+        </div>
+        <Table>
+          <TableCaption>Token recap</TableCaption>
+          <TableHeader>
+            <TableHead>Key</TableHead>
+            <TableHead>Value</TableHead>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>{getValues("name")}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Ticker</TableCell>
+              <TableCell>${getValues("ticker")}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Supply</TableCell>
+              <TableCell>
+                {Intl.NumberFormat("en-US").format(getValues("initialSupply"))}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Initial Liquidity</TableCell>
+              <TableCell>
+                {Intl.NumberFormat("en-US").format(getValues("marketNotional"))}{" "}
+                ETH
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Liquidity</TableCell>
+              <TableCell>
+                {getValues("lockLiquidity") ? "locked" : "free"}
+              </TableCell>
+            </TableRow>
+            {launched && (
+              <>
+                <TableRow>
+                  <TableCell>Pair</TableCell>
+                  <TableCell>
+                    <Link
+                      href={launched.pair}
+                      className="text-primary underline"
+                      target="_blank"
+                    >
+                      sithswap.com
+                    </Link>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Swap</TableCell>
+                  <TableCell>
+                    <Link
+                      href={launched.swap}
+                      className="text-primary underline"
+                      target="_blank"
+                    >
+                      avnu.fi
+                    </Link>
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell>Address</TableCell>
+                  <TableCell>
+                    <Link
+                      href={`https://starkscan.co/token/${launched.token}`}
+                      className="text-primary underline"
+                      target="_blank"
+                    >
+                      {launched.token.slice(0, 10)}...
+                      {launched.token.slice(-10)}
+                    </Link>
+                  </TableCell>
+                </TableRow>
+              </>
+            )}
+          </TableBody>
+        </Table>
       </div>
       {!launched ? (
         <div className="w-full flex justify-between gap-4">
@@ -94,7 +180,7 @@ export const RecapStep = ({
           {!starknet ? (
             <Button
               onClick={async () => {
-                const account = await connect({chainId: "SN_GOERLI"});
+                const account = await connect({chainId: "SN_MAINNET"});
                 if (account) setStarknet(account);
               }}
             >
@@ -111,8 +197,7 @@ export const RecapStep = ({
                     title: "Deploying token",
                   });
                   const deployed = await account.deploy({
-                    classHash:
-                      "0x21293e71e7efff54ea1efe62a3cec51eaeb94ea4769339c4d5d9e8cde29a080",
+                    classHash,
                     constructorCalldata: [
                       Buffer.from(getValues("name"), "ascii"),
                       Buffer.from(getValues("ticker"), "ascii"),
@@ -133,20 +218,12 @@ export const RecapStep = ({
                       const receipt = await account.getTransactionReceipt(
                         deployed.transaction_hash
                       );
-                      if (
-                        (receipt as any).finality_status === "ACCEPTED_ON_L2"
-                      ) {
-                        console.log("accepted");
+                      if (receipt.status === "ACCEPTED_ON_L2") {
                         clearInterval(interval);
                         resolve(() => {});
                       }
                     }, 2000);
                   });
-                  // const deployed = {
-                  //   contract_address: [
-                  //     "0x058c0e8e893a2098e7e6b6d94c37ec3ae5f7318d1401b8283008a3e4ef68b72b",
-                  //   ],
-                  // };
                   toast({
                     title: "Initiating initial supply",
                   });
@@ -296,18 +373,21 @@ export const RecapStep = ({
                       const receipt = await account.getTransactionReceipt(
                         tx.transaction_hash
                       );
-                      if (
-                        (receipt as any).finality_status === "ACCEPTED_ON_L2"
-                      ) {
-                        console.log("accepted");
+                      if (receipt.status === "ACCEPTED_ON_L2") {
                         clearInterval(interval);
                         resolve(() => {});
                       }
                     }, 2000);
                   });
+                  const provider = new Provider({
+                    rpc: {
+                      nodeUrl:
+                        "https://g.w.lavanet.xyz:443/gateway/strk/rpc-http/f7ee0000000000000000000000000000",
+                    },
+                  });
                   const {
                     result: [pair],
-                  } = await account.callContract({
+                  } = await provider.callContract({
                     entrypoint: "pairFor",
                     contractAddress: router,
                     calldata: [deployed.contract_address[0], ETH, 0],
@@ -321,18 +401,19 @@ export const RecapStep = ({
                     const [balance_low, balance_high]: any = await new Promise(
                       (resolve) => {
                         const interval = setInterval(async () => {
-                          const {
-                            result: [balance_low, balance_high],
-                          } = await account.callContract({
-                            entrypoint: "balanceOf",
-                            contractAddress: pair,
-                            calldata: [account.address],
-                          });
-                          if (balance_low && balance_high) {
-                            console.log("accepted");
-                            clearInterval(interval);
-                            resolve([balance_low, balance_high]);
-                          }
+                          try {
+                            const {
+                              result: [balance_low, balance_high],
+                            } = await account.callContract({
+                              entrypoint: "balanceOf",
+                              contractAddress: pair,
+                              calldata: [account.address],
+                            });
+                            if (balance_low && balance_high) {
+                              clearInterval(interval);
+                              resolve([balance_low, balance_high]);
+                            }
+                          } catch (e) {}
                         }, 10000);
                       }
                     );
@@ -356,7 +437,6 @@ export const RecapStep = ({
                     token: deployed.contract_address[0],
                   });
                 } catch (e) {
-                  console.error(e);
                   setLoading(false);
                 }
               }}
@@ -371,53 +451,21 @@ export const RecapStep = ({
           )}
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          <span>
-            Pair:{" "}
-            <Link
-              href={launched.pair}
-              className="text-primary underline"
-              target="_blank"
-            >
-              sithswap.com
-            </Link>
-          </span>
-          <span>
-            Swap:{" "}
-            <Link
-              href={launched.swap}
-              className="text-primary underline"
-              target="_blank"
-            >
-              avnu.fi
-            </Link>
-          </span>
-          <span>
-            Token:{" "}
-            <Link
-              href={`https://testnet.starkscan.co/token/${launched.token}`}
-              className="text-primary underline"
-              target="_blank"
-            >
-              {launched.token}
-            </Link>
-          </span>
-          <Link
-            href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
-              `I created $${getValues(
-                "ticker"
-              )} in seconds with zkmeme by @flydex0.\nContract address: ${
-                launched.token
-              }\n`
-            )}&url=${encodeURIComponent(`https://zkmeme.vercel.app`)}`}
-            target="_blank"
-          >
-            <Button>
-              <Twitter className="w-4 h-4 mr-2" />
-              Share on twitter
-            </Button>
-          </Link>
-        </div>
+        <Link
+          href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+            `I created $${getValues(
+              "ticker"
+            )} in seconds with zkmeme by @flydex0.\nContract address: ${
+              launched.token
+            }\n`
+          )}&url=${encodeURIComponent(`https://zkmeme.vercel.app`)}`}
+          target="_blank"
+        >
+          <Button>
+            <Twitter className="w-4 h-4 mr-2" />
+            Share on twitter
+          </Button>
+        </Link>
       )}
     </div>
   );
