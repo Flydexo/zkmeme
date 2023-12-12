@@ -13,4 +13,5 @@ export const schema = z.object({
     })
   ),
   lockLiquidity: z.boolean(),
+  fee: z.enum(["FIXED", "FEE"]),
 });

@@ -122,7 +122,7 @@ export const RecapStep = ({
             <TableRow>
               <TableCell>Liquidity</TableCell>
               <TableCell>
-                {getValues("lockLiquidity") ? "locked" : "free"}
+                {getValues("lockLiquidity") ? "burned" : "free"}
               </TableCell>
             </TableRow>
             {launched && (

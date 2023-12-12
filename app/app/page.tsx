@@ -13,6 +13,7 @@ import {RecapStep} from "@/components/steps/recap";
 import {schema} from "@/lib/config";
 import {Toaster} from "@/components/ui/toaster";
 import {Progress} from "@/components/ui/progress";
+import {FeeStep} from "@/components/steps/fee";
 
 export default function Trade() {
   const [step, setStep] = useState(0);
@@ -28,6 +29,7 @@ export default function Trade() {
       marketNotional: 1,
       airdrops: [],
       lockLiquidity: true,
+      fee: "FEE",
     },
   });
 
@@ -50,25 +52,31 @@ export default function Trade() {
           control={control}
         />
       ) : step === 3 ? (
-        <MarketStep
+        <FeeStep
           next={() => setStep(4)}
           back={() => setStep(2)}
-          watch={watch}
           control={control}
         />
       ) : step === 4 ? (
-        <DistributionStep
+        <MarketStep
           next={() => setStep(5)}
           back={() => setStep(3)}
+          watch={watch}
+          control={control}
+        />
+      ) : step === 5 ? (
+        <DistributionStep
+          next={() => setStep(6)}
+          back={() => setStep(4)}
           watch={watch}
           control={control}
           setValue={setValue}
           getValues={getValues}
         />
-      ) : step === 5 ? (
-        <RecapStep back={() => setStep(4)} getValues={getValues} />
+      ) : step === 6 ? (
+        <RecapStep back={() => setStep(5)} getValues={getValues} />
       ) : null}
-      <Progress value={(step / 5) * 100} className="mt-10" />
+      <Progress value={(step / 6) * 100} className="mt-10" />
     </div>
   );
 }

@@ -108,26 +108,45 @@ export const DistributionStep = ({
         <Pie
           redraw={true}
           data={{
-            labels: [
-              "Liquidity Pool",
-              "ZkMeme",
-              ...watch("airdrops").map((a) => a.address),
-              "you",
-            ],
+            labels:
+              watch("fee") === "FEE"
+                ? [
+                    "Liquidity Pool",
+                    "ZkMeme",
+                    ...watch("airdrops").map((a) => a.address),
+                    "you",
+                  ]
+                : [
+                    "Liquidity Pool",
+                    ...watch("airdrops").map((a) => a.address),
+                    "you",
+                  ],
             datasets: [
               {
                 label: "Token distribution",
-                data: [
-                  watch("marketShare"),
-                  5,
-                  ...watch("airdrops").map((a) => a.share),
-                  100 -
-                    [
-                      watch("marketShare"),
-                      5,
-                      ...watch("airdrops").map((a) => a.share),
-                    ].reduce((a, b) => a + b),
-                ],
+                data:
+                  watch("fee") === "FEE"
+                    ? [
+                        watch("marketShare"),
+                        3,
+                        ...watch("airdrops").map((a) => a.share),
+                        100 -
+                          [
+                            watch("marketShare"),
+                            3,
+                            ...watch("airdrops").map((a) => a.share),
+                          ].reduce((a, b) => a + b),
+                      ]
+                    : [
+                        watch("marketShare"),
+                        ...watch("airdrops").map((a) => a.share),
+                        100 -
+                          [
+                            watch("marketShare"),
+                            3,
+                            ...watch("airdrops").map((a) => a.share),
+                          ].reduce((a, b) => a + b),
+                      ],
                 hoverOffset: 4,
               },
             ],

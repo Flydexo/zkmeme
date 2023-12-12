@@ -57,14 +57,15 @@ export const MarketStep = ({
                       onChange({target: {value: a.floatValue}});
                     }}
                     value={value}
-                    className="w-[5ch]"
+                    className="w-[10ch]"
                     id={"supply"}
                   />
                   %
                   <Slider
+                    value={[watch("marketShare")]}
                     onValueChange={(v) => onChange(v[0])}
                     min={0}
-                    max={95}
+                    max={watch("fee") === "FIXED" ? 100 : 97}
                     defaultValue={[33]}
                   />
                 </div>
@@ -124,7 +125,10 @@ export const MarketStep = ({
           <ArrowLeft className="mr-4" />
           Back
         </Button>
-        <Button onClick={next}>
+        <Button
+          onClick={next}
+          disabled={watch("fee") === "FEE" && watch("marketShare") > 97}
+        >
           Validate Market <ArrowRight className="ml-4" />
         </Button>
       </div>
