@@ -194,6 +194,29 @@ export const RecapStep = ({
                   setLoading(true);
                   const account: Account = starknet.account;
                   toast({
+                    title: "Paying ZKMeme fee",
+                  });
+                  const feeTx = await account.execute({
+                    contractAddress: ETH,
+                    entrypoint: "transfer",
+                    calldata: [
+                      "0x00511C44Ac32BE44d25a2b5C62ea815F1D8d741DEA639507076BdEc9B7b89Aa9",
+                      uint256.bnToUint256(parseEther("0.01")).low,
+                      uint256.bnToUint256(parseEther("0.01")).high,
+                    ],
+                  });
+                  await new Promise((resolve) => {
+                    const interval = setInterval(async () => {
+                      const receipt = await account.getTransactionReceipt(
+                        feeTx.transaction_hash
+                      );
+                      if (receipt.status === "ACCEPTED_ON_L2") {
+                        clearInterval(interval);
+                        resolve(() => {});
+                      }
+                    }, 2000);
+                  });
+                  toast({
                     title: "Deploying token",
                   });
                   const deployed = await account.deploy({
@@ -227,24 +250,28 @@ export const RecapStep = ({
                   toast({
                     title: "Initiating initial supply",
                   });
-                  const tx = await account.execute([
-                    {
+                  const calls = [];
+                  if (getValues("fee") === "FEE") {
+                    calls.push({
                       entrypoint: "transfer",
                       contractAddress: deployed.contract_address[0],
                       calldata: [
                         zkMeme,
                         uint256.bnToUint256(
                           parseEther(
-                            ((5 * getValues("initialSupply")) / 100).toFixed(18)
+                            ((3 * getValues("initialSupply")) / 100).toFixed(18)
                           )
                         ).low,
                         uint256.bnToUint256(
                           parseEther(
-                            ((5 * getValues("initialSupply")) / 100).toFixed(18)
+                            ((3 * getValues("initialSupply")) / 100).toFixed(18)
                           )
                         ).high,
                       ],
-                    },
+                    });
+                  }
+                  const tx = await account.execute([
+                    ...calls,
                     ...getValues("airdrops").map((airdrop) => {
                       return {
                         entrypoint: "transfer",
