@@ -20,17 +20,21 @@ import {
 } from "@/components/ui/dialog";
 import {useAccount, useProvider} from "@starknet-react/core";
 import {formatEther, parseEther} from "ethers";
-import {Coins} from "lucide-react";
+import {Coins, Copy} from "lucide-react";
 import Link from "next/link";
 import {useCallback, useState} from "react";
 import {addAddressPadding, shortString, uint256} from "starknet";
 import {campaignClassHash} from "@/lib/config";
+import {useSearchParams} from "next/navigation";
 
 const MAX_CAMPAIGN_TIME = 3 * 24 * 3600;
 const MIN_CLAIM_TIME = 24 * 3600;
 
 export default function Launch() {
-  const [searchCampaignId, setSearchCampaignId] = useState("");
+  const searchParams = useSearchParams();
+  const [searchCampaignId, setSearchCampaignId] = useState(
+    searchParams.has("c") ? searchParams.get("c") || "" : ""
+  );
   const {provider} = useProvider();
   const [data, setData] = useState<{
     name: string;
@@ -363,10 +367,16 @@ export default function Launch() {
                       size={"icon"}
                       variant={"outline"}
                       onClick={() => {
-                        navigator.clipboard.writeText(searchCampaignId);
+                        navigator.clipboard.writeText(
+                          `https://zkmeme.xyz/launchpad?c=${searchCampaignId}`
+                        );
+                        toast({
+                          title:
+                            "Link to launchpad campaign copied in clipboard",
+                        });
                       }}
                     >
-                      <Coins className="w-4 h-4" />
+                      <Copy className="w-4 h-4" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
