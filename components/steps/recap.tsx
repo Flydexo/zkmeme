@@ -55,7 +55,7 @@ export const RecapStep = ({
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-xl font-bold">Recap</h1>
-      <p className="text-sm">You token is ready to launch! 🚀</p>
+      <p className="text-sm">Your token is ready to launch! 🚀</p>
       <div className="w-full flex gap-10">
         <div className="w-[300px]">
           <Pie
