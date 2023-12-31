@@ -22,8 +22,10 @@ import {
 } from "../ui/table";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Colors);
-const router =
-  "0x028c858a586fa12123a1ccb337a0a3b369281f91ea00544d0c086524b759f627";
+const jediswap =
+  "0x041fd22b238fa21cfcf5dd45a8548974d8263b3a531a60388411c5e230f97023";
+const jediswapFactory =
+  "0x00dad44c139a476c7a17fc8141e6db680e9abc9f56fe249a105094c44382c2fd";
 const ETH =
   "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7";
 const zkMeme =
@@ -193,29 +195,31 @@ export const RecapStep = ({
                 try {
                   setLoading(true);
                   const account: Account = starknet.account;
-                  toast({
-                    title: "Paying ZKMeme fee",
-                  });
-                  const feeTx = await account.execute({
-                    contractAddress: ETH,
-                    entrypoint: "transfer",
-                    calldata: [
-                      "0x00511C44Ac32BE44d25a2b5C62ea815F1D8d741DEA639507076BdEc9B7b89Aa9",
-                      uint256.bnToUint256(parseEther("0.01")).low,
-                      uint256.bnToUint256(parseEther("0.01")).high,
-                    ],
-                  });
-                  await new Promise((resolve) => {
-                    const interval = setInterval(async () => {
-                      const receipt = await account.getTransactionReceipt(
-                        feeTx.transaction_hash
-                      );
-                      if (receipt.status === "ACCEPTED_ON_L2") {
-                        clearInterval(interval);
-                        resolve(() => {});
-                      }
-                    }, 2000);
-                  });
+                  if (getValues("fee") === "FIXED") {
+                    toast({
+                      title: "Paying ZKMeme fee",
+                    });
+                    const feeTx = await account.execute({
+                      contractAddress: ETH,
+                      entrypoint: "transfer",
+                      calldata: [
+                        "0x00511C44Ac32BE44d25a2b5C62ea815F1D8d741DEA639507076BdEc9B7b89Aa9",
+                        uint256.bnToUint256(parseEther("0.01")).low,
+                        uint256.bnToUint256(parseEther("0.01")).high,
+                      ],
+                    });
+                    await new Promise((resolve) => {
+                      const interval = setInterval(async () => {
+                        const receipt = await account.getTransactionReceipt(
+                          feeTx.transaction_hash
+                        );
+                        if (receipt.status === "ACCEPTED_ON_L2") {
+                          clearInterval(interval);
+                          resolve(() => {});
+                        }
+                      }, 2000);
+                    });
+                  }
                   toast({
                     title: "Deploying token",
                   });
@@ -301,7 +305,7 @@ export const RecapStep = ({
                       entrypoint: "approve",
                       contractAddress: deployed.contract_address[0],
                       calldata: [
-                        router,
+                        jediswap,
                         uint256.bnToUint256(
                           parseEther(
                             (
@@ -326,7 +330,7 @@ export const RecapStep = ({
                       entrypoint: "approve",
                       contractAddress: ETH,
                       calldata: [
-                        router,
+                        jediswap,
                         uint256.bnToUint256(
                           parseEther(getValues("marketNotional").toFixed(18))
                         ).low,
@@ -336,12 +340,11 @@ export const RecapStep = ({
                       ],
                     },
                     {
-                      entrypoint: "addLiquidity",
-                      contractAddress: router,
+                      entrypoint: "add_liquidity",
+                      contractAddress: jediswap,
                       calldata: [
                         deployed.contract_address[0],
                         ETH,
-                        0,
                         uint256.bnToUint256(
                           parseEther(
                             (
@@ -415,13 +418,13 @@ export const RecapStep = ({
                   const {
                     result: [pair],
                   } = await provider.callContract({
-                    entrypoint: "pairFor",
-                    contractAddress: router,
+                    entrypoint: "get_pair",
+                    contractAddress: jediswapFactory,
                     calldata: [deployed.contract_address[0], ETH, 0],
                   });
                   if (getValues("lockLiquidity") === true) {
                     toast({
-                      title: "Locking liquidity",
+                      title: "Burning liquidity",
                       description:
                         "This step might take more than 2 minutes because we need to wait the contract to be indexed",
                     });
@@ -459,7 +462,7 @@ export const RecapStep = ({
                   toast({title: "🚀 Token launched"});
                   setLoading(false);
                   setLaunched({
-                    pair: `https://app.sithswap.com/add/${pair}`,
+                    pair: `https://app.jediswap.xyz/#/add/ETH/${deployed.contract_address[0]}`,
                     swap: `https://app.avnu.fi/en?tokenFrom=0x49d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7&tokenTo=${deployed.contract_address[0]}&amount=1`,
                     token: deployed.contract_address[0],
                   });

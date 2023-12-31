@@ -15,3 +15,6 @@ export const schema = z.object({
   lockLiquidity: z.boolean(),
   fee: z.enum(["FIXED", "FEE"]),
 });
+
+export const campaignClassHash =
+  "0x07a4029632326873a5b22726af2c50d79bfb9d7e658604d3ada19334d0901071";

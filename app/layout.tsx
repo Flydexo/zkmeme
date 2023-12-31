@@ -3,6 +3,8 @@ import {Inter} from "next/font/google";
 import "./globals.css";
 import clsx from "clsx";
 import {Analytics} from "@vercel/analytics/react";
+import {Header} from "@/components/panels/Header";
+import {StarknetProvider} from "@/components/providers/starknet";
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -52,10 +54,13 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           content="HCM_UD_LHMCyEDEDGI2qHSEtu64847pQ8Pb4m0Xm2ac"
         />
       </head>
-      <body className={clsx(inter.className, "dark")}>
-        {children}
-        <Analytics />
-      </body>
+      <StarknetProvider>
+        <body className={clsx(inter.className, "dark")}>
+          <Header />
+          {children}
+        </body>
+      </StarknetProvider>
+      <Analytics />
     </html>
   );
 }
