@@ -37,8 +37,10 @@ export const Header = () => {
       </div>
       {account ? (
         <Button onClick={() => disconnect()}>
-          {name ? name : account.address.slice(0, 4)}...
-          {account.address.slice(-4)}
+          {name
+            ? name
+            : `${account.address.slice(0, 4)}...
+          ${account.address.slice(-4)}`}
         </Button>
       ) : (
         <Button onClick={() => setModalOpened(true)}>Connect Wallet</Button>
